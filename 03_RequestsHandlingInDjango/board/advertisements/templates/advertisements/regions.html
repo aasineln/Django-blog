@@ -1,0 +1,17 @@
+<html>
+<body>
+<ul>
+    {% for region in regions %}
+    <li>{{ region }}</li>
+    {% endfor %}
+
+    <form method="post">
+        {% csrf_token %}
+        <p>Добавить регион:</p>
+        <input type="text">
+        <input type="submit" value="Отправить">
+        <output>{{ form_region_message }}</output>
+    </form>
+</ul>
+</body>
+</html>

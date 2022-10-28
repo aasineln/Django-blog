@@ -1,0 +1,23 @@
+<html>
+<body>
+<h1>Главная страница</h1>
+<select name=region>
+    {% for region in regions %}
+    <option>{{ region }}</option>
+    {% endfor %}
+</select>
+<select name=region>
+    {% for category in categories %}
+    <option>{{ category }}</option>
+    {% endfor %}
+</select>
+
+<form method="post">
+    {% csrf_token %}
+    <p>Поиск объявления:</p>
+    <input type="text">
+    <input type="submit" value="Найти">
+    <output>{{ main_form_ad_message }}</output>
+</form>
+</body>
+</html>

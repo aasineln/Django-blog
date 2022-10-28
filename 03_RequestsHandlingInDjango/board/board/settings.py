@@ -48,6 +48,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'board.middleware.filter_ip_middleware.FilterIPMiddleware',
+    'board.middleware.delay_response_middleware.DelayHttpResponse',
+    'board.middleware.stop_ddos_middleware.StopDDOSMiddleware5RequestsMinute',
+    'board.middleware.logging_visitors_middleware.LoggingVisitorsMiddleware'
 ]
 
 ROOT_URLCONF = 'board.urls'

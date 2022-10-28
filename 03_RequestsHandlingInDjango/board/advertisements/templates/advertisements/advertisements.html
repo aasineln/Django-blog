@@ -1,0 +1,20 @@
+<html>
+<ul>
+    {% for advertisement in advertisements %}
+    <li>{{ advertisement }}</li>
+    {% endfor %}
+</ul>
+<form method="post">
+    {% csrf_token %}
+    <p>Добавить регион:</p>
+    <input type="text">
+    <input type="submit" value="Отправить">
+    <output>{{ form_advertisement_message }}</output>
+</form>
+<br>
+<div>
+    <p>Счётчик GET-запросов: {{ get_counter }}</p>
+    <p>Счётчик POST-запросов: {{ post_counter }}</p>
+</div>
+
+</html>
