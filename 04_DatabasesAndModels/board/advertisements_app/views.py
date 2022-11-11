@@ -15,11 +15,4 @@ class AdvertisementListView(generic.ListView):
 
 class AdvertisementDetailView(generic.DetailView):
     model = Advertisement
-    queryset = Advertisement.objects.all()
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['price_to_dollar'] = Advertisement.objects.get(pk=context[self.pk_url_kwarg]).price
-
-        return context
 
