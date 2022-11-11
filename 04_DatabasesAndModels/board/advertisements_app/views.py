@@ -1,8 +1,9 @@
+from django.contrib.sites import requests
 from django.shortcuts import render
 from django.db import models
 from django.views import generic
 from advertisements_app.models import Advertisement
-import random
+from django.http import HttpResponse, HttpRequest
 
 
 class AdvertisementListView(generic.ListView):
@@ -14,15 +15,11 @@ class AdvertisementListView(generic.ListView):
 
 class AdvertisementDetailView(generic.DetailView):
     model = Advertisement
+    queryset = Advertisement.objects.all()
 
-#
-# def advertisements_list(request, *args, **kwargs):
-#     advertisements = Advertisement.objects.all()
-#     return render(request, 'advertisements/advertisement_list.html', {'advertisements': advertisements})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['price_to_dollar'] = Advertisement.objects.get(pk=context[self.pk_url_kwarg]).price
 
+        return context
 
-# def random_advertisement(request, *args, **kwargs):
-#     advertisements = Advertisement.objects.all()
-#     random_adv = random.choice(advertisements)
-#     print(random_adv, random_adv.title)
-#     return render(request, 'advertisements/random_advertisement.html', {'advertisement': random_adv})
