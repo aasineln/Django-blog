@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Объявления</title>
+</head>
+<body>
+{% if advertisement_list %}
+<ul>
+    <li> {{ advertisement.title }}</li>
+    <p> {{ advertisement.title }}</p>
+</ul>
+
+{% else %}
+<p>Объявлений нет</p>
+{% endif %}
+</body>
+</html>
