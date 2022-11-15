@@ -1,0 +1,11 @@
+{% extends 'app_news/base.html' %}
+
+{% block news_content %}
+    <section class="py-5 container">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Создать</button>
+        </form>
+    </section>
+{% endblock %}

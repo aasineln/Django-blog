@@ -1,0 +1,28 @@
+{% extends 'app_news/base.html' %}
+
+{% block title %}
+    {{ object.title }}
+{% endblock %}
+
+{% block news_content %}
+    <div class="album py-5 bg-light">
+        <div class="container">
+            <h2>{{ object.title }}</h2>
+            <p>{{ object.description }}</p>
+            <p>Дата создания: {{ object.created_at|date:'d E Y H:i' }}</p>
+            <p>Дата редактиврования: {{ object.updated_at|date:'d E Y H:i' }}</p>
+        </div>
+    </div>
+{% endblock %}
+
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#    <meta charset="UTF-8">#}
+{#    <title></title>#}
+{#</head>#}
+{#<body>#}
+{#<h1>Новости</h1>#}
+
+{#</body>#}
+{#</html>#}

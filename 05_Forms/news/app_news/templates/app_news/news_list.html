@@ -1,0 +1,42 @@
+{% extends 'app_news/base.html' %}
+
+{% block news_content %}
+    <section class="py-5 text-center container">
+        <div class="row py-lg-5">
+            <div class="col-lg-6 col-md-8 mx-auto">
+                <h1>Lorem ipsum dolor sit amet</h1>
+                <p class="lead">Consectetur adipisicing elit. Minima, perferendis, placeat! Animi
+                    laboriosam magni minus praesentium voluptatum. Animi culpa debitis eos facere, soluta sunt. Ab
+                    assumenda
+                    cum
+                    ea officia sint!</p>
+                <a class="btn btn-primary" href="{% url 'create' %}" role="button">Создать новость</a>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="album py-5 bg-light">
+        <div class="container">
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                {% for news in news_list %}
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <div class="card-body post-entry">
+                                <h5 class="card-title">{{ news.title }}</h5>
+                                <p class="card-text">{{ news.description }}</p>
+                                <p class="card-text">{{ news.created_at }}</p>
+                                <a href="/news/{{ news.id }}/" class="btn btn-primary">Читать</a>
+                                <a href="{% url 'edit' news.id %}" class="btn btn-outline-primary">Редактировать</a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{#        <h2><a href=""></a></h2>#}
+{#        <p>Дата создания: {{ news.created_at|date:'d E Y H:i' }}</p>#}
+{#    <p>Дата редактиврования: {{ news.updated_at|date:'d E Y H:i' }}</p>#}
