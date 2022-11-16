@@ -7,22 +7,45 @@
 {% block news_content %}
     <div class="album py-5 bg-light">
         <div class="container">
-            <h2>{{ object.title }}</h2>
-            <p>{{ object.description }}</p>
-            <p>Дата создания: {{ object.created_at|date:'d E Y H:i' }}</p>
-            <p>Дата редактиврования: {{ object.updated_at|date:'d E Y H:i' }}</p>
+            <h2>{{ news.title }}</h2>
+            <p>{{ news.description }}</p>
+            <p>Дата создания: {{ news.created_at|date:'d E Y H:i' }}</p>
+            <p>Дата редактиврования: {{ news.updated_at|date:'d E Y H:i' }}</p>
         </div>
     </div>
+
+
+
+    <section class="py-5 text-center container">
+        <h2>Доьавить комментарий</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ comments_form.as_p }}
+            <button type="submit">Добавить</button>
+        </form>
+    </section>
+
+    <div class="album py-5 bg-light">
+        <div class="container">
+            {% if comments_list %}
+                {% for comment in comments_list %}
+                    <div class="col">
+                        <div class="card shadow-sm">
+                            <div class="card-body post-entry">
+                                <h5 class="card-title">{{ comment.name }}</h5>
+                                <p class="card-text">{{ comment.text }}</p>
+                                <p class="card-text">{{ comment.created }}</p>
+                                {#                                <a href="/news/{{ news.id }}/" class="btn btn-primary">Читать</a>#}
+                                {#                                <a href="{% url 'edit' news.id %}" class="btn btn-outline-primary">Редактировать</a>#}
+                                {#                                <a href="{% url 'delete' news.id %}" class="btn btn-outline-danger">Удалить</a>#}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>Комментариев нет</p>
+            {% endif %}
+        </div>
+    </div>
+
 {% endblock %}
-
-{#<!DOCTYPE html>#}
-{#<html lang="en">#}
-{#<head>#}
-{#    <meta charset="UTF-8">#}
-{#    <title></title>#}
-{#</head>#}
-{#<body>#}
-{#<h1>Новости</h1>#}
-
-{#</body>#}
-{#</html>#}

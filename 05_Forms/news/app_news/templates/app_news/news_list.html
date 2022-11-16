@@ -11,28 +11,32 @@
                     cum
                     ea officia sint!</p>
                 <a class="btn btn-primary" href="{% url 'create' %}" role="button">Создать новость</a>
-                </p>
             </div>
         </div>
     </section>
 
     <div class="album py-5 bg-light">
         <div class="container">
-            <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-                {% for news in news_list %}
-                    <div class="col">
-                        <div class="card shadow-sm">
-                            <div class="card-body post-entry">
-                                <h5 class="card-title">{{ news.title }}</h5>
-                                <p class="card-text">{{ news.description }}</p>
-                                <p class="card-text">{{ news.created_at }}</p>
-                                <a href="/news/{{ news.id }}/" class="btn btn-primary">Читать</a>
-                                <a href="{% url 'edit' news.id %}" class="btn btn-outline-primary">Редактировать</a>
+            {% if news_list %}
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+                    {% for news in news_list %}
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body post-entry">
+                                    <h5 class="card-title">{{ news.title }}</h5>
+                                    <p class="card-text">{{ news.description|slice:":120" }}...</p>
+                                    <p class="card-text">{{ news.created_at }}</p>
+                                    <a href="/news/{{ news.id }}/" class="btn btn-primary">Читать</a>
+                                    <a href="{% url 'edit' news.id %}" class="btn btn-outline-primary">Редактировать</a>
+                                    <a href="{% url 'delete' news.id %}" class="btn btn-outline-danger">Удалить</a>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                {% endfor %}
-            </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Новостей нет</p>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

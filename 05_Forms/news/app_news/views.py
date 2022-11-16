@@ -1,9 +1,12 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views import View
-from django.views.generic import ListView, DetailView, CreateView, UpdateView
-from .models import News
-from .forms import NewsForm
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic.edit import FormMixin
+
+from .models import News, Comment
+from django.urls import reverse_lazy
+from .forms import NewsForm, CommentForm
 
 
 class NewsView(ListView):
@@ -12,22 +15,27 @@ class NewsView(ListView):
     context_object_name = 'news_list'
     queryset = News.objects.all()
 
-
 class NewsDetailView(DetailView):
+    template_name = 'app_news/news_detail.html'
+    form_class = CommentForm
     model = News
 
+    def get_context_data(self, **kwargs):
+        news = super().get_object()
+        context = super().get_context_data(**kwargs)
+        context['comments_form'] = CommentForm()
+        context['comments_list'] = Comment.objects.filter(news_id=news.id)
+        return context
 
-# class NewsCreateView(View):
-#     def get(self, request):
-#         news_form = NewsForm()
-#         return render(request, 'app_news/news_create.html', context={'news_form': news_form})
-#
-#     def post(self, request):
-#         news_form = NewsForm(request.POST)
-#         if news_form.is_valid():
-#             News.objects.create(**news_form.cleaned_data)
-#             return HttpResponseRedirect('/news')
-#         return render(request, 'app_news/news_create.html', context={'news_form': news_form})
+    def post(self, request, pk, **kwargs):
+        comments_form = CommentForm(request.POST)
+        if comments_form.is_valid():
+            comments_form.cleaned_data['news_id'] = pk
+            Comment.objects.create(**comments_form.cleaned_data)
+            return HttpResponseRedirect(request.path_info)
+        print('не зашёл')
+        return render(request, 'app_news/news_detail.html', context={'comment_form': comments_form})
+
 
 class NewsCreateView(CreateView):
     model = News
@@ -39,14 +47,35 @@ class NewsEditView(UpdateView):
     fields = ['title', 'description']
     template_name_suffix = '_update_form'
 
-    # form_class = NewsForm
-    # template_name = 'app_news/news_edit.html'
-    #
-    # def get_context_data(self, *, object_list=None, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['title'] = 'Добавление статьи'
-    #     context['description'] = description
-    #     return context
+
+class NewsDeleteView(DeleteView):
+    model = News
+    success_url = reverse_lazy('news')
+
+
+class CommentCreateView(CreateView):
+    model = Comment
+    fields = ['name', 'text']
+
+
+class CommentEditView(UpdateView):
+    model = Comment
+    fields = ['name', 'text']
+    template_name_suffix = '_update_form'
+
+
+class CommentDeleteView(DeleteView):
+    model = Comment
+    success_url = reverse_lazy('news')
+
+# form_class = NewsForm
+# template_name = 'app_news/news_edit.html'
+#
+# def get_context_data(self, *, object_list=None, **kwargs):
+#     context = super().get_context_data(**kwargs)
+#     context['title'] = 'Добавление статьи'
+#     context['description'] = description
+#     return context
 
 # class NewsEditView(View):
 #     def get(self, request, news_id):
