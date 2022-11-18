@@ -7,6 +7,7 @@ class News(models.Model):
     description = models.CharField(max_length=5000, verbose_name='Текст новости')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    is_active = models.BooleanField()
 
     def __str__(self):
         return self.title
@@ -30,5 +31,10 @@ class Comment(models.Model):
 
     def __str__(self):
         return 'Comment by {}'.format(self.name)
+
+    def short_comment(self):
+        if len(self.text) < 15:
+            return self.text
+        return f'{self.text[:15]}...'
 
 
