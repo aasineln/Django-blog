@@ -34,15 +34,14 @@ class NewsDetailView(DetailView):
 
     def post(self, request, pk, **kwargs):
         comments_form = CommentForm(request.POST)
+        if self.request.user.is_authenticated:
+            comments_form.fields['name'] = CharField(widget=HiddenInput(), required=False)
         if comments_form.is_valid():
-            if not request.user.is_authenticated:
+            if request.user.is_authenticated:
+                comments_form.cleaned_data['name'] = str(request.user)
+            else:
                 anon_user = comments_form.cleaned_data['name']
                 comments_form.cleaned_data['name'] = ' '.join((anon_user, '(аноним)'))
-            comments_form.cleaned_data['news_id'] = pk
-            Comment.objects.create(**comments_form.cleaned_data)
-            return HttpResponseRedirect(request.path_info)
-        else:
-            comments_form.cleaned_data['name'] = str(request.user)
             comments_form.cleaned_data['news_id'] = pk
             Comment.objects.create(**comments_form.cleaned_data)
             return HttpResponseRedirect(request.path_info)
