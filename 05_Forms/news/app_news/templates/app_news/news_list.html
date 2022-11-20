@@ -2,6 +2,11 @@
 
 {% block news_content %}
     <section class="py-5 text-center container">
+        {% if request.user.is_authenticated %}
+            <div>
+                <h2>Добрый день, {{ request.user }}</h2>
+            </div>
+        {% endif %}
         <div class="row py-lg-5">
             <div class="col-lg-6 col-md-8 mx-auto">
                 <h1>Lorem ipsum dolor sit amet</h1>
@@ -26,7 +31,7 @@
                                     <h5 class="card-title">{{ news.title }}</h5>
                                     <p class="card-text">{{ news.description|slice:":120" }}...</p>
                                     <p class="card-text">{{ news.created_at }}</p>
-                                    <a href="/news/{{ news.id }}/" class="btn btn-primary">Читать</a>
+                                    <a href="{{ news.id }}/" class="btn btn-primary">Читать</a>
                                     <a href="{% url 'edit' news.id %}" class="btn btn-outline-primary">Редактировать</a>
                                     <a href="{% url 'delete' news.id %}" class="btn btn-outline-danger">Удалить</a>
                                 </div>
