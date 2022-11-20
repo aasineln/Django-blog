@@ -121,3 +121,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGIN_URL = '/login/'
+
+SESSION_COOKIE_AGE = 30*24*60*60
