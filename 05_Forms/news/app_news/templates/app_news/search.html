@@ -1,0 +1,47 @@
+{% extends './base.html' %}
+{% load static %}
+
+{% block news_content %}
+
+
+<h1>Search Results</h1>
+
+<ul>
+    {% for news in object_list %}
+    <li>
+        {{ news }}
+    </li>
+    {% endfor %}
+</ul>
+<!--<div class="container-fluid home-slider">-->
+<!--    <div id="carouselExampleCaptions" class="carousel slide" data-ride="carousel">-->
+<!--        <div class="carousel-inner">-->
+<!--            <div class="carousel-item active" style="background-color: #343a40!important">-->
+<!--                <div class="carousel-caption d-none d-md-block">-->
+<!--                    <form action="" class="my-2 my-lg-0">-->
+<!--                        <input type="text" class="form-control" placeholder="Поиск" aria-label="Поиск">-->
+<!--                        <button class="btn btn-outline-success mt-3" type="submit">Поиск</button>-->
+<!--                    </form>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!--<div class="container">-->
+<!--    <div class="row">-->
+<!--        <div class="col-lg-12">-->
+<!--            <p class="lead">Найдено записей: 3</p>-->
+<!--            <a href=""><h2>Заголовок поста 1</h2></a>-->
+<!--            <p>Это красткое описание поста. Это красткое описание поста. Это красткое описание поста.</p>-->
+<!--            <hr>-->
+<!--            <a href=""><h2>Заголовок поста 2</h2></a>-->
+<!--            <p>Это красткое описание поста. Это красткое описание поста. Это красткое описание поста.</p>-->
+<!--            <hr>-->
+<!--            <a href=""><h2>Заголовок поста 3</h2></a>-->
+<!--            <p>Это красткое описание поста. Это красткое описание поста. Это красткое описание поста.</p>-->
+<!--            <hr>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+{% endblock %}

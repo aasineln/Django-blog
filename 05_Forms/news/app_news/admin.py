@@ -1,17 +1,22 @@
 from django.contrib import admin
-from .models import News, Comment
+from .models import News, Comment, NewsTags
 
 
 class CommentInLine(admin.TabularInline):
     model = Comment
 
 
+class TagsInline(admin.TabularInline):
+    model = NewsTags.news.through
+
+
 @admin.register(News)
 class NewsAdmin(admin.ModelAdmin):
     list_display = ['title', 'created_at', 'updated_at', 'is_active']
     list_filter = ['is_active']
-    inlines = [CommentInLine]
+    inlines = [TagsInline, CommentInLine]
     actions = ['mark_active', 'mark_inactive']
+    prepopulated_fields = {"slug": ("title",)}
 
     def mark_active(self, request, queryset):
         queryset.update(is_active=True)
@@ -33,3 +38,8 @@ class CommentAdmin(admin.ModelAdmin):
         queryset.update(text='Удалено администратором')
 
     deleted_by_admin.short_description = 'Очистить текст и подписать Удалено админстратором'
+
+
+@admin.register(NewsTags)
+class Tags(admin.ModelAdmin):
+    list_display = ['tag']

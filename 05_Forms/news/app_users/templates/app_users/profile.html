@@ -1,0 +1,75 @@
+{% extends 'app_users/base.html' %}
+
+{% block title %}
+Обо мне
+{% endblock %}
+<body>
+
+{% block news_content %}
+<div class="container">
+    <div class="mb-3 row">
+        {% if is_users %}
+        <h2>Обо мне</h2>
+        <p>{{ request.user }}</p>
+        <p>Имя: {{ request.user.first_name }}</p>
+        <p>Фамилия: {{ request.user.last_name }}</p>
+        <p>Телефон: {{ user.phone }}</p>
+        <p>Город: {{ user.city }}</p>
+        {% endif %}
+        <p>Опубликовано новостей: {{ user.published_news_count }}</p>
+        <p>Верификация: {{ user.is_verified }}</p>
+    </div>
+</div>
+{% if perms.app_users.can_verify %}
+<div class="container">
+    <div class="mb-3 row">
+        <h3>Запросы на верификацию</h3>
+        <form method="post">
+            {% csrf_token %}
+            <ol style="border-bottom: black 1px solid; line-height: 200%; padding-bottom: 10px">
+                {% for user in users %}
+                <label>
+                    {% if user.is_verified %}
+                    {{ user.user }}
+                    <input type="checkbox" name="users_list" checked
+                           value="{{ user.id }}">
+                    {% else %}
+                    {{ user.user }}
+                    <input type="checkbox" name="users_list"
+                           value="{{ user.id }}">
+                    {% endif %}
+                </label>
+
+                {% endfor %}
+
+                <input type="submit" value="Верифицировать" name="verify_users">
+            </ol>
+        </form>
+    </div>
+</div>
+{% endif %}
+
+{% if perms.app_users.can_verify %}
+<div class="container">
+    <div class="mb-3 row">
+        <h3>Запросы на публикацию новостей</h3>
+        <form method="post">
+            {% csrf_token %}
+            <ol style="border-bottom: black 1px solid; line-height: 200%; padding-bottom: 10px">
+                {% for i_news in news %}
+                <label>
+                    {{ i_news.title }}
+                    <input type="checkbox" name="news_list"
+                           value="{{ i_news.id }}">
+                </label>
+                {% endfor %}
+
+                <input type="submit" value="Опубликовать" name="verify_users">
+            </ol>
+        </form>
+
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
