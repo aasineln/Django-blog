@@ -39,7 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app_news',
     'app_users',
-    'taggit',
 ]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'

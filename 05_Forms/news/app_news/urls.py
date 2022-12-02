@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import NewsView, NewsDetailView, NewsCreateView, NewsEditView, NewsDeleteView, NewsLoginView, \
-    NewsLogoutView, TagNewsView, SearchResultsView
+    NewsLogoutView, SearchResultsView
 from django.contrib.auth.decorators import login_required
 
 urlpatterns = [
