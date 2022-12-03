@@ -1,13 +1,10 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView
-from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
-from django.forms import HiddenInput, forms, CharField
-from django.http import HttpResponseRedirect, HttpResponse
-from django.shortcuts import render, get_object_or_404
-from django.views import View
+from django.forms import HiddenInput, CharField
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
-from django.views.generic.edit import FormMixin, FormView
-from taggit.models import Tag
+from django.views.generic.edit import FormView
 
 from .models import News, Comment, NewsTags
 from django.urls import reverse_lazy

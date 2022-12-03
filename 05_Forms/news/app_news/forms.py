@@ -1,8 +1,5 @@
 from django import forms
-from .models import News, Comment, NewsTags
-from django.forms.models import inlineformset_factory
-
-# NewsFormset = inlineformset_factory(News, NewsTags, extra=1)
+from .models import News, Comment
 
 
 class NewsForm(forms.ModelForm):

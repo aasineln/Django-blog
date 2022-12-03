@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User, AbstractUser, Group
+from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.db import models
 

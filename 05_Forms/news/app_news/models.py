@@ -1,10 +1,6 @@
 from django.db import models
-from django.db.models import ManyToManyField
 from django.urls import reverse
-from taggit.models import RuTaggedItem
-
 from app_users.models import User
-from taggit.managers import TaggableManager
 
 
 class News(models.Model):
