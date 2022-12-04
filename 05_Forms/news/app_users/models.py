@@ -12,7 +12,6 @@ class Profile(models.Model):
     phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True, verbose_name='Номер телефона')
     published_news_count = models.IntegerField(default=0, verbose_name='Количество опубликованных новостей')
 
-
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
@@ -39,13 +38,3 @@ class Profile2(models.Model):
             ('view_kpi', 'Может просматривать kpi'),
             ('view_alarms', 'Может просматривать alarms')
         )
-#
-#
-# class Profile(models.Model):
-
-#     city = models.CharField(max_length=36, blank=True, null=True)
-#     is_verified = models.BooleanField(default=False)
-#     phone_regex = RegexValidator(regex=r'^\+?1?\d{9,15}$',
-#                                  message="Телефонный номер должен быть следующего формата: '+999999999'")
-#     phone_number = models.CharField(validators=[phone_regex], max_length=17, blank=True, verbose_name='Номер телефона')
-#     published_news_count = models.IntegerField(default=0, verbose_name='Количество опубликованных новостей')

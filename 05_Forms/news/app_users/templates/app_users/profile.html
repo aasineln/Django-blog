@@ -8,16 +8,13 @@
 {% block news_content %}
 <div class="container">
     <div class="mb-3 row">
-        {% if is_users %}
         <h2>Обо мне</h2>
         <p>{{ request.user }}</p>
         <p>Имя: {{ request.user.first_name }}</p>
         <p>Фамилия: {{ request.user.last_name }}</p>
-        <p>Телефон: {{ user.phone }}</p>
-        <p>Город: {{ user.city }}</p>
-        {% endif %}
-        <p>Опубликовано новостей: {{ user.published_news_count }}</p>
-        <p>Верификация: {{ user.is_verified }}</p>
+        <p>Телефон: {{ user.profile.phone_number }}</p>
+        <p>Город: {{ user.profile.city }}</p>
+        <p>Верификация: {{ user.profile.is_verified }}</p>
     </div>
 </div>
 {% if perms.app_users.can_verify %}

@@ -51,6 +51,7 @@ class SearchResultsView(TemplateView):
         object_list = News.objects.filter(newstags__tag__icontains=query)
         return object_list
 
+
 class TagNewsView(ListView):
     model = News
     context_object_name = 'news_list'
@@ -127,9 +128,6 @@ class NewsDetailView(DetailView):
 
 
 class NewsCreateView(UserPassesTestMixin, FormView):
-    # model = News, NewsTags
-    # fields = ['title', 'description', 'tags']
-    # form_class = NewsForm
     template_name = 'app_news/news_create.html'
     form_class = NewsForm
     success_url = '/'
@@ -138,30 +136,26 @@ class NewsCreateView(UserPassesTestMixin, FormView):
         return self.request.user.has_perm('app_news.add_news')
 
     def form_valid(self, form):
-        print(form.cleaned_data)
         form_title = form.cleaned_data['title']
         form_description = form.cleaned_data['description']
         form_tags = form.cleaned_data['tags']
         tag = NewsTags(tag=form_tags)
         tag.save()
-        print(tag, tag.news)
         news = tag.news.create(title=form_title, description=form_description)
         news.save()
-        print(news, news.title, news.description, tag.news)
         return super().form_valid(form)
-    # def post(self, request, *args, **kwargs):
-    #     form =
 
 
 class NewsEditView(UpdateView):
     model = News
     fields = ['title', 'description']
     template_name_suffix = '_update_form'
+    success_url = '/'
 
 
 class NewsDeleteView(DeleteView):
     model = News
-    success_url = reverse_lazy('news')
+    success_url = '/'
 
 
 class CommentCreateView(CreateView):

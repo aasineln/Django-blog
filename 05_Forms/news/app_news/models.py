@@ -10,7 +10,6 @@ class News(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=False)
     slug = models.SlugField(max_length=50, unique=True, null=True, verbose_name='URL')
-    # tags = models.ManyToManyField('NewsTags', related_name='news_tags')
 
     def __str__(self):
         return self.title

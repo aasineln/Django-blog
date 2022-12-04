@@ -20,7 +20,9 @@ class RegisterView(CreateView):
     def form_valid(self, form):
         user = form.save()
         city = form.cleaned_data.get('city')
-        new_user = Profile.objects.create(user=user, city=city)
+        phone_number = form.cleaned_data.get('phone_number')
+        print(form.cleaned_data)
+        new_user = Profile.objects.create(user=user, city=city, phone_number=phone_number)
         group = Group.objects.get(name='Пользователи')
         new_user.user.groups.add(group)
         new_user.save()
