@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <title>
         {% block title %}
-        Новости
         {% endblock %}
     </title>
 </head>
@@ -36,8 +35,7 @@
         <a class="btn btn-dark" href="{% url 'profile' %}">{{ request.user }}</a>
         <a class="btn btn-dark" href="{% url 'logout' %}">Logout</a>
         {% else %}
-        <a class="btn btn-dark" href="{% url 'register' %}">Register</a>
-        <a class="btn btn-dark" href="{% url 'login' %}">Sign in</a>
+        <a class="btn btn-dark" href="{% url 'login' %}">Login</a>
         {% endif %}
     </div>
 </nav>

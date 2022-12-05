@@ -1,12 +1,12 @@
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView
-from django.forms import HiddenInput, forms, CharField
+from django.forms import HiddenInput, CharField
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.views import View
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
-from django.views.generic.edit import FormMixin
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from django.views.generic.edit import FormView
 
-from .models import News, Comment
+from .models import News, Comment, NewsTags
 from django.urls import reverse_lazy
 from .forms import NewsForm, CommentForm
 
@@ -16,6 +16,84 @@ class NewsView(ListView):
     context_object_name = 'news_list'
     template_name = 'app_news/news_list.html'
     queryset = News.objects.all()
+
+    def get_context_data(self, *, object_list=None, **kwargs):
+        context = super().get_context_data(**kwargs)
+        query = self.request.GET.get('news_sort', None)
+        if query == 'first_new':
+            news_list = News.objects.all().order_by('-created_at')
+            context['news_list'] = news_list
+            return context
+
+        elif query == 'first_old':
+            news_list = News.objects.all().order_by('created_at')
+            context['news_list'] = news_list
+            return context
+
+        query = self.request.GET.get('q')
+        if query:
+            news_list = News.objects.filter(newstags__tag__icontains=query)
+            context['news_list'] = news_list
+            context['tag'] = query
+            return context
+
+        return context
+
+
+class SearchResultsView(TemplateView):
+    model = News
+    template_name = 'app_news/news_list.html'
+    context_object_name = 'news_list'
+
+    def get_queryset(self):  # новый
+        query = self.request.GET.get('q')
+        self.user_query = query
+        object_list = News.objects.filter(newstags__tag__icontains=query)
+        return object_list
+
+
+class TagNewsView(ListView):
+    model = News
+    context_object_name = 'news_list'
+    template_name = 'app_news/news_list.html'
+    queryset = News.objects.filter(newstags__tag__icontains='java')
+    # queryset = News.objects.filter(is_active=True)
+
+    # def get(self):
+    #     if self.request.user.has_perm('app_news.can_publish'):
+    #         queryset = News.objects.all()
+
+
+# def show_news(request, news_slug):
+#     news = get_object_or_404(News, slug=news_slug)
+#     return reverse('post', kwargs={'post_slug': self.slug})
+
+# def news_list(request, tag_slug=None):
+#     object_list = News.objects.all()
+#     print(object_list)
+#     tag = None
+#
+#     if tag_slug:
+#         tag = get_object_or_404(Tag, slug=tag_slug)
+#         print(object_list)
+#         object_list = object_list.filter(tags__in=[tag])
+#
+#     paginator = Paginator(object_list, 3)  # 3 поста на каждой странице
+#     page = request.GET.get('page')
+#     try:
+#         news = paginator.page(page)
+#     except PageNotAnInteger:
+#         # Если страница не является целым числом, поставим первую страницу
+#         news = paginator.page(1)
+#     except EmptyPage:
+#         # Если страница больше максимальной, доставить последнюю страницу результатов
+#         news = paginator.page(paginator.num_pages)
+#     print(tag)
+#     return render(request,
+#                   'app_news/news_list.html',
+#                   {'page': page,
+#                    'news_list': news,
+#                    'tag': tag})
 
 
 class NewsDetailView(DetailView):
@@ -49,21 +127,35 @@ class NewsDetailView(DetailView):
         return render(request, 'app_news/news_detail.html', context={'comment_form': comments_form})
 
 
-class NewsCreateView(CreateView):
-    model = News
-    fields = ['title', 'description']
+class NewsCreateView(UserPassesTestMixin, FormView):
+    template_name = 'app_news/news_create.html'
+    form_class = NewsForm
     success_url = '/'
+
+    def test_func(self):
+        return self.request.user.has_perm('app_news.add_news')
+
+    def form_valid(self, form):
+        form_title = form.cleaned_data['title']
+        form_description = form.cleaned_data['description']
+        form_tags = form.cleaned_data['tags']
+        tag = NewsTags(tag=form_tags)
+        tag.save()
+        news = tag.news.create(title=form_title, description=form_description)
+        news.save()
+        return super().form_valid(form)
 
 
 class NewsEditView(UpdateView):
     model = News
     fields = ['title', 'description']
     template_name_suffix = '_update_form'
+    success_url = '/'
 
 
 class NewsDeleteView(DeleteView):
     model = News
-    success_url = reverse_lazy('news')
+    success_url = '/'
 
 
 class CommentCreateView(CreateView):
@@ -88,7 +180,6 @@ class NewsLoginView(LoginView):
 
 
 class NewsLogoutView(LogoutView):
-    print('ВЫШЕЛ!')
     template_name = 'app_news/logout.html'
     next_page = '/'
 

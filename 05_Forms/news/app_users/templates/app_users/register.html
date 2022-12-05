@@ -1,0 +1,19 @@
+{% extends 'app_users/base.html' %}
+
+{% block title %}
+    Регистрация
+{% endblock %}
+<body>
+
+{% block news_content %}
+
+    <div class="container">
+        <div class="mb-3 row">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Регистрация</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
