@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import News, Comment, NewsTags
+from .models import News, Comment, NewsTags, ImageModel
 
 
 class CommentInLine(admin.TabularInline):
@@ -43,3 +43,13 @@ class CommentAdmin(admin.ModelAdmin):
 @admin.register(NewsTags)
 class Tags(admin.ModelAdmin):
     list_display = ['tag']
+
+
+@admin.register(ImageModel)
+class Tags(admin.ModelAdmin):
+    pass
+
+#
+# @admin.register(Author)
+# class AuthorAdmin(admin.ModelAdmin):
+#     pass

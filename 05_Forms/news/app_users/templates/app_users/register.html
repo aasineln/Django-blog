@@ -9,7 +9,7 @@
 
     <div class="container">
         <div class="mb-3 row">
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <button type="submit">Регистрация</button>

@@ -12,6 +12,20 @@
             {{ form.as_p }}
             <button type="submit">Сохранить</button>
         </form>
+{#        <div class="mb-3 row">#}
+{#            <h2>Обо мне</h2>#}
+{#            <p>{{ request.user }}</p>#}
+{#            <form>#}
+{#                <label for="first_name">Имя:</label>#}
+{#                <input id="first_name">{{ request.user.first_name }}</input>#}
+{#            </form>#}
+{#            <p>Имя: {{ request.user.first_name }}</p>#}
+{#            <p>Фамилия: {{ request.user.last_name }}</p>#}
+{#            <p>Телефон: {{ user.profile.phone_number }}</p>#}
+{#            <p>Город: {{ user.profile.city }}</p>#}
+{#            <p>Верификация: {{ user.profile.is_verified }}</p>#}
+{#            <button>Редактировать</button>#}
+{#        </div>#}
     </div>
     {% if perms.app_users.can_verify %}
         <div class="container">

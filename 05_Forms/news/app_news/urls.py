@@ -1,7 +1,8 @@
+from django.conf import settings
+from django.conf.urls.static import static
 from django.urls import path
 from .views import NewsView, NewsDetailView, NewsCreateView, NewsEditView, NewsDeleteView, NewsLoginView, \
-    NewsLogoutView, SearchResultsView
-from django.contrib.auth.decorators import login_required
+    NewsLogoutView, SearchResultsView, UploadNewsCsv
 
 urlpatterns = [
     path('', NewsView.as_view(), name='news'),
@@ -13,4 +14,8 @@ urlpatterns = [
     path('create/', NewsCreateView.as_view(), name='create'),
     path('<int:pk>/edit/', NewsEditView.as_view(), name='edit'),
     path('<int:pk>/delete/', NewsDeleteView.as_view(), name='delete'),
+    path('upload_news_csv', UploadNewsCsv.as_view(), name='upload_news_csv'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

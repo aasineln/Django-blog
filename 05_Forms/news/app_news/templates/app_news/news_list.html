@@ -1,81 +1,85 @@
 {% extends 'app_news/base.html' %}
 
 {% block news_content %}
-<section class="py-5 text-center container">
-    {% if request.user.is_authenticated %}
-    <div>
-        <h2>Добрый день, {{ request.user }}</h2>
-    </div>
-    {% endif %}
-    <div class="row py-lg-5">
-        <div class="col-lg-6 col-md-8 mx-auto">
-            <h1>Lorem ipsum dolor sit amet</h1>
-            <p class="lead">Consectetur adipisicing elit. Minima, perferendis, placeat! Animi
-                laboriosam magni minus praesentium voluptatum. Animi culpa debitis eos facere, soluta sunt. Ab
-                assumenda
-                cum
-                ea officia sint!</p>
-            {% if perms.app_users.add_news %}
-            <a class="btn btn-primary" href="{% url 'create' %}" role="button">Создать новость</a>
-            {% endif%}
-        </div>
-    </div>
-</section>
-<div class="album py-5 bg-light">
-    <div class="container">
-
-        <form action="{% url 'news' %}" method="get">
-            <label for="search-input">Поиск по тегам</label>
-            <input name="q" type="text" id="search-input" placeholder="python">
-        </form>
-    </div>
-</div>
-
-<div class="container">
-    <p>Сортировка:
-        <a href="{% url 'news' %}?news_sort=first_new">Сначала новые</a>
-        <a href="{% url 'news' %}?news_sort=first_old">Сначала старые</a>
-    </p>
-</div>
-
-<div class="album py-5 bg-light">
-    <div class="container">
-
-
-        {% if news_list %}
-        {% if tag %}
-        <h2>Новости с тегом: "{{ tag }}"</h2>
-        {% endif %}
-        <br>
-        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
-
-            {% for news in news_list %}
-            <div class="col">
-                <div class="card shadow-sm">
-                    <div class="card-body post-entry">
-                        <h5 class="card-title">{{ news.title }}</h5>
-                        <p class="card-text">{{ news.description|slice:":120" }}...</p>
-                        <p class="card-text">{{ news.created_at }}</p>
-                        <a href="{{ news.id }}/" class="btn btn-primary">Читать</a>
-                        <a href="{% url 'edit' news.id %}" class="btn btn-outline-primary">Редактировать</a>
-                        <a href="{% url 'delete' news.id %}" class="btn btn-outline-danger">Удалить</a>
-                    </div>
-                </div>
+    <section class="py-5 text-center container">
+        {% if request.user.is_authenticated %}
+            <div>
+                <h2>Добрый день, {{ request.user }}</h2>
             </div>
-            {% endfor %}
-        </div>
-        {% else %}
-        <p>Новостей нет</p>
         {% endif %}
-        <!--        <div class="row">-->
-        <!--            <div class="w-50 mx-auto">-->
-        <!--                {% include "app_news/pagination.html" with page=news_list %}-->
-        <!--            </div>-->
-        <!--        </div>-->
+        <div class="row py-lg-5">
+            <div class="col-lg-6 col-md-8 mx-auto">
+                <h1>Lorem ipsum dolor sit amet</h1>
+                <p class="lead">Consectetur adipisicing elit. Minima, perferendis, placeat! Animi
+                    laboriosam magni minus praesentium voluptatum. Animi culpa debitis eos facere, soluta sunt. Ab
+                    assumenda
+                    cum
+                    ea officia sint!</p>
+                {% if perms.app_news.add_news %}
+                    <a class="btn btn-primary" href="{% url 'create' %}" role="button">Создать новость</a>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    <div class="album py-5 bg-light">
+        <div class="container">
+
+            <form action="{% url 'news' %}" method="get">
+                <label for="search-input">Поиск по тегам</label>
+                <input name="q" type="text" id="search-input" placeholder="python">
+            </form>
+        </div>
     </div>
 
+    <div class="container">
+        <p>Сортировка:
+            <a href="{% url 'news' %}?news_sort=first_new">Сначала новые</a>
+            <a href="{% url 'news' %}?news_sort=first_old">Сначала старые</a>
+        </p>
+    </div>
 
-</div>
+    <div class="album py-5 bg-light">
+        <div class="container">
+
+
+            {% if news_list %}
+                {% if tag %}
+                    <h2>Новости с тегом: "{{ tag }}"</h2>
+                {% endif %}
+                <br>
+                <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+                    {% for news in news_list %}
+                        <div class="col">
+                            <div class="card shadow-sm">
+                                <div class="card-body post-entry">
+                                    <h5 class="card-title">{{ news.title }}</h5>
+                                    <p class="card-text">{{ news.description|slice:":100" }}...</p>
+                                    <p class="card-text">{{ news.created_at }}</p>
+                                    <p class="card-text">Автор: {{ news.author }}</p>
+                                    <a href="{{ news.id }}/" class="btn btn-primary">Читать</a>
+                                    {% if news.author == request.user %}
+                                        <a href="{% url 'edit' news.id %}"
+                                           class="btn btn-outline-primary">Редактировать</a>
+                                        <a href="{% url 'delete' news.id %}" class="btn btn-outline-danger">Удалить</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>Новостей нет</p>
+            {% endif %}
+            <!--        <div class="row">-->
+            <!--            <div class="w-50 mx-auto">-->
+            <!--                {% include "app_news/pagination.html" with page=news_list %}-->
+            <!--            </div>-->
+            <!--        </div>-->
+        </div>
+
+
+    </div>
 
 {% endblock %}
 

@@ -1,14 +1,14 @@
+from _csv import reader
+
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.forms import HiddenInput, CharField
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
-from django.views.generic.edit import FormView
-
-from .models import News, Comment, NewsTags
+from .models import News, Comment, ImageModel
 from django.urls import reverse_lazy
-from .forms import NewsForm, CommentForm
+from .forms import NewsForm, CommentForm, ImageForm, UploadNewsForm
 
 
 class NewsView(ListView):
@@ -19,6 +19,7 @@ class NewsView(ListView):
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super().get_context_data(**kwargs)
+        # context['author'] = Author.objects.
         query = self.request.GET.get('news_sort', None)
         if query == 'first_new':
             news_list = News.objects.all().order_by('-created_at')
@@ -56,44 +57,7 @@ class TagNewsView(ListView):
     model = News
     context_object_name = 'news_list'
     template_name = 'app_news/news_list.html'
-    queryset = News.objects.filter(newstags__tag__icontains='java')
-    # queryset = News.objects.filter(is_active=True)
-
-    # def get(self):
-    #     if self.request.user.has_perm('app_news.can_publish'):
-    #         queryset = News.objects.all()
-
-
-# def show_news(request, news_slug):
-#     news = get_object_or_404(News, slug=news_slug)
-#     return reverse('post', kwargs={'post_slug': self.slug})
-
-# def news_list(request, tag_slug=None):
-#     object_list = News.objects.all()
-#     print(object_list)
-#     tag = None
-#
-#     if tag_slug:
-#         tag = get_object_or_404(Tag, slug=tag_slug)
-#         print(object_list)
-#         object_list = object_list.filter(tags__in=[tag])
-#
-#     paginator = Paginator(object_list, 3)  # 3 поста на каждой странице
-#     page = request.GET.get('page')
-#     try:
-#         news = paginator.page(page)
-#     except PageNotAnInteger:
-#         # Если страница не является целым числом, поставим первую страницу
-#         news = paginator.page(1)
-#     except EmptyPage:
-#         # Если страница больше максимальной, доставить последнюю страницу результатов
-#         news = paginator.page(paginator.num_pages)
-#     print(tag)
-#     return render(request,
-#                   'app_news/news_list.html',
-#                   {'page': page,
-#                    'news_list': news,
-#                    'tag': tag})
+    queryset = News.objects.filter(is_active=True)
 
 
 class NewsDetailView(DetailView):
@@ -104,6 +68,7 @@ class NewsDetailView(DetailView):
         news = super().get_object()
         context = super().get_context_data(**kwargs)
         context['comments_list'] = Comment.objects.filter(news_id=news.id)
+        context['photo_list'] = ImageModel.objects.filter(news_id=news.id)
         comments_form = CommentForm()
         if self.request.user.is_authenticated:
             comments_form.fields['name'] = CharField(widget=HiddenInput(), required=False)
@@ -127,23 +92,32 @@ class NewsDetailView(DetailView):
         return render(request, 'app_news/news_detail.html', context={'comment_form': comments_form})
 
 
-class NewsCreateView(UserPassesTestMixin, FormView):
+class NewsCreateView(UserPassesTestMixin, CreateView):
+    model = News
     template_name = 'app_news/news_create.html'
-    form_class = NewsForm
     success_url = '/'
+    form_class = NewsForm
 
     def test_func(self):
         return self.request.user.has_perm('app_news.add_news')
 
-    def form_valid(self, form):
-        form_title = form.cleaned_data['title']
-        form_description = form.cleaned_data['description']
-        form_tags = form.cleaned_data['tags']
-        tag = NewsTags(tag=form_tags)
-        tag.save()
-        news = tag.news.create(title=form_title, description=form_description)
-        news.save()
-        return super().form_valid(form)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form_img'] = ImageForm()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        form = NewsForm(request.POST)
+        img_form = ImageForm(request.POST, request.FILES)
+        if form.is_valid() and img_form.is_valid():
+            instance = form.save(commit=False)
+            instance.author = request.user
+            instance.save()
+            files = request.FILES.getlist('photo')
+            for file in files:
+                img = ImageModel(news=instance, photo=file)
+                img.save()
+        return redirect('/')
 
 
 class NewsEditView(UpdateView):
@@ -183,24 +157,36 @@ class NewsLogoutView(LogoutView):
     template_name = 'app_news/logout.html'
     next_page = '/'
 
-# form_class = NewsForm
-# template_name = 'app_news/news_edit.html'
-#
-# def get_context_data(self, *, object_list=None, **kwargs):
-#     context = super().get_context_data(**kwargs)
-#     context['title'] = 'Добавление статьи'
-#     context['description'] = description
-#     return context
 
-# class NewsEditView(View):
-#     def get(self, request, news_id):
-#         news = News.objects.get(id=news_id)
-#         news_form = NewsForm(instance=news)
-#         return render(request, 'app_news/news_edit.html', context={'news_form': news_form, 'news_id': news_id})
-#
-#     def post(self, request, news_id):
-#         news = News.objects.get(id=news_id)
-#         news_form = NewsForm(request.POST, instance=news)
-#         if news_form.is_valid():
-#             news.save()
-#         return render(request, 'app_news/news_edit.html', context={'news_form': news_form, 'news_id': news_id})
+class UploadNewsCsv(TemplateView):
+    template_name = 'app_news/upload_news_csv.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UploadNewsCsv, self).get_context_data()
+        context['form'] = UploadNewsForm()
+
+        return context
+
+    def post(self, request):
+        upload_file_form = UploadNewsForm(request.POST, request.FILES)
+        if upload_file_form.is_valid():
+            query_info = {
+                'updated_items': 0,
+                'new_items': 0,
+                'new_items_list': []
+            }
+            price_file = upload_file_form.cleaned_data['file'].read()
+            price_str = price_file.decode('cp1251').split('\r\n')
+            csv_reader = reader(price_str, delimiter=";", quotechar='"')
+
+            for row in csv_reader:
+                if len(row) == 2:
+                    try:
+                        print(row)
+                        News.objects.create(title=row[0], description=row[1])
+                        query_info['new_items'] += 1
+                        query_info['new_items_list'].append(row[0])
+                    except BaseException as e:
+                        print(e)
+
+            return HttpResponse(content=f'Новости успешно загружены<br>{query_info}', status=200)

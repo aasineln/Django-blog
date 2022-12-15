@@ -1,6 +1,16 @@
+import os
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
 from django.db import models
+
+
+def path_and_filename(instance, filename):
+    now = datetime.now()
+    added_time_name = str(now.strftime("%d%m%y-%H-%M-%S")) + '_'
+    new_file_name = added_time_name + filename
+    return os.path.join('', new_file_name)
 
 
 class Profile(models.Model):
@@ -24,12 +34,13 @@ class Profile(models.Model):
         return self.user.username
 
 
-class Profile2(models.Model):
+class ProfileAvatar(models.Model):
     """
     Класс создан для тестирования связанной модели,
     не для выполнения Практической работы
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    avatar = models.ImageField(upload_to=path_and_filename, null=True)
 
     class Meta:
         verbose_name = 'Профиль'
