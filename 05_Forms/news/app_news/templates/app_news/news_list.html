@@ -15,7 +15,7 @@
                     assumenda
                     cum
                     ea officia sint!</p>
-                {% if perms.app_news.add_news %}
+                {% if request.user.is_authenticated %}
                     <a class="btn btn-primary" href="{% url 'create' %}" role="button">Создать новость</a>
                 {% endif %}
             </div>
