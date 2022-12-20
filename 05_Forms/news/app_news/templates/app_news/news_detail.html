@@ -11,6 +11,9 @@
             <p>{{ news.description }}</p>
             <p>Дата создания: {{ news.created_at|date:'d E Y H:i' }}</p>
             <p>Дата редактиврования: {{ news.updated_at|date:'d E Y H:i' }}</p>
+            {% for photo in photo_list %}
+                <img src="{{ MEDIA_URL }}/{{ photo }}" alt="Картинка">
+            {% endfor %}
         </div>
     </div>
 

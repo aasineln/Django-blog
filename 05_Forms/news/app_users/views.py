@@ -1,11 +1,10 @@
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, User
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
-from django.views.generic import CreateView, View
-
+from django.views.generic import CreateView, View, UpdateView
 from app_news.models import News
-from .models import Profile
-from .forms import RegisterForm
+from .models import Profile, ProfileAvatar
+from .forms import RegisterForm, UserForm
 
 
 class RegisterView(CreateView):
@@ -16,6 +15,16 @@ class RegisterView(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         return context
+
+    def post(self, request, *args, **kwargs):
+        form = RegisterForm(request.POST, request.FILES)
+
+        if form.is_valid():
+            instance = form.save()
+            avatar = form.cleaned_data['avatar']
+            ProfileAvatar.objects.create(user=instance, avatar=avatar)
+
+        return redirect('/')
 
     def form_valid(self, form):
         user = form.save()
@@ -29,6 +38,19 @@ class RegisterView(CreateView):
         return redirect(self.success_url)
 
 
+class ProfileEditView(UpdateView):
+    form_class = UserForm
+    template_name = 'app_users/profile.html'
+    model = User
+    success_url = '/'
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+    def test_func(self, request):
+        return request.user.id == self.get_object()
+
+
 class ProfileView(View):
     def get(self, request):
         context = {}
@@ -38,7 +60,6 @@ class ProfileView(View):
         context["is_users"] = "users" in current_user_groups
         return render(request, 'app_users/profile.html', context)
 
-    # @permissions
     def post(self, request, **kwargs):
         to_verify_users_list = request.POST.getlist('users_list')
         to_publish_news = request.POST.getlist('news_list')

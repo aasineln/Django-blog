@@ -1,6 +1,15 @@
+import os
 from django.db import models
+from django.db.models.functions import datetime
 from django.urls import reverse
 from app_users.models import User
+
+
+def path_and_filename(instance, filename):
+    now = datetime.datetime.now()
+    added_time_name = str(now.strftime("%d%m%y-%H-%M-%S")) + '_'
+    new_file_name = added_time_name + filename
+    return os.path.join('', new_file_name)
 
 
 class News(models.Model):
@@ -10,6 +19,8 @@ class News(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     is_active = models.BooleanField(default=False)
     slug = models.SlugField(max_length=50, unique=True, null=True, verbose_name='URL')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    # avatar = models.ImageField(upload_to=path_and_filename, null=True, blank=True)
 
     def __str__(self):
         return self.title
@@ -22,6 +33,14 @@ class News(models.Model):
         permissions = [
             ('can_publish', 'Может публиковать'),
         ]
+
+
+class ImageModel(models.Model):
+    news = models.ForeignKey(News, on_delete=models.CASCADE)
+    photo = models.ImageField(upload_to=path_and_filename, null=True, blank=True)
+
+    def __str__(self):
+        return str(self.photo)
 
 
 class Comment(models.Model):
@@ -55,3 +74,15 @@ class NewsTags(models.Model):
 
     def __str__(self):
         return self.tag
+
+
+# class Author(models.Model):
+#     user = models.CharField(max_length=100)
+#     news = models.ForeignKey(News, on_delete=models.CASCADE, blank=True, null=True)
+#
+#     def __str__(self):
+#         return self.user
+#
+#     @staticmethod
+#     def published_news(self):
+#         return len(News.objects.filter(author=self.user))

@@ -1,12 +1,12 @@
 {% extends 'app_news/base.html' %}
 
 {% block news_content %}
-    <section class="py-5 container">
+    <div class="container">
+        <h2>Загрузить прайс</h2>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
             {{ form.as_p }}
-            {{ form_img.as_p }}
-            <button type="submit">Создать</button>
+            <button type="submit">Загрузить</button>
         </form>
-    </section>
+    </div>
 {% endblock %}
